@@ -3,13 +3,11 @@
 import os
 import gc
 import re
-''
 import cv2
 import math
 import numpy as np
 import scipy as sp
 import pandas as pd
-
 import tensorflow as tf
 from IPython.display import SVG
 #import efficientnet.tfkeras as efn
@@ -20,7 +18,6 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.models import Model
 from kaggle_datasets import KaggleDatasets
 from tensorflow.keras.applications import DenseNet121
-
 import seaborn as sns
 from tqdm import tqdm
 import matplotlib.cm as cm
@@ -28,16 +25,13 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
-
 tqdm.pandas()
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 from plotly.subplots import make_subplots
-
 np.random.seed(0)
 tf.random.set_seed(0)
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -123,17 +117,17 @@ def visualize_leaves(cond=[0, 0, 0, 0], cond_cols=["healthy"], is_cond=True):
             ax[row, col].imshow(images.loc[images.index[row*3+col]])
     plt.show()
     
-    visualizing Healthy leaves
-    visualize_leaves(cond=[1, 0, 0, 0], cond_cols=["healthy"])
+#visualizing Healthy leaves
+visualize_leaves(cond=[1, 0, 0, 0], cond_cols=["healthy"])
     
-    visualizing scab leaves
-    visualize_leaves(cond=[0, 1, 0, 0], cond_cols=["scab"])
+#visualizing scab leaves
+visualize_leaves(cond=[0, 1, 0, 0], cond_cols=["scab"])
     
-    visualizing rust leaves
-    visualize_leaves(cond=[0, 0, 1, 0], cond_cols=["rust"])
+#visualizing rust leaves
+ visualize_leaves(cond=[0, 0, 1, 0], cond_cols=["rust"])
     
-    All labels together
-    fig = px.parallel_categories(train_data[["healthy", "scab", "rust", "multiple_diseases"]], color="healthy", color_continuous_scale="sunset",\
+ All labels together
+ fig = px.parallel_categories(train_data[["healthy", "scab", "rust", "multiple_diseases"]], color="healthy", color_continuous_scale="sunset",\
                              title="Parallel categories plot of targets")
 #Setup TPU Config
 AUTO = tf.data.experimental.AUTOTUNE
@@ -230,22 +224,21 @@ STEPS_PER_EPOCH = train_labels.shape[0] // BATCH_SIZE
 lr_schedule = tf.keras.callbacks.LearningRateScheduler(lrfn, verbose=1)
 
 #Desnet
-
-    model = tf.keras.Sequential([DenseNet121(input_shape=(512, 512, 3),
+model = tf.keras.Sequential([DenseNet121(input_shape=(512, 512, 3),
                                              weights='imagenet',
                                              include_top=False),
                                  L.GlobalAveragePooling2D(),
                                  L.Dense(train_labels.shape[1],
                                          activation='softmax')])
         
-    model.compile(optimizer='adam',
+model.compile(optimizer='adam',
                   loss = 'categorical_crossentropy',
                   metrics=['categorical_accuracy'])
-    model.summary()
+model.summary()
     
    # Model building
     
-    history = model.fit(train_dataset,
+history = model.fit(train_dataset,
                     epochs=EPOCHS,
                     callbacks=[lr_schedule],
                     steps_per_epoch=STEPS_PER_EPOCH,
